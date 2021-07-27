@@ -54,6 +54,7 @@ resource "google_container_node_pool" "primary_nodes" {
   }
 }
 
+# creating sql instance
 resource "google_sql_database_instance" "mysql" {
   name                = "${var.project_id}-sql-storage"
   database_version    = "MYSQL_8_0"
@@ -66,16 +67,40 @@ resource "google_sql_database_instance" "mysql" {
   }
 }
 
+# creating sql database
 resource "google_sql_database" "sql-database" {
   name     = "${var.project_id}-sql-events"
   instance = google_sql_database_instance.mysql.name
 }
 
+# creating sql user
 resource "google_sql_user" "sql-user" {
   name     = "${var.project_id}-sql"
   instance = google_sql_database_instance.mysql.name
   password = var.sql_password
 }
+
+# using the preexisting service account
+resource "google_service_account" "ga-serviceaccount" {
+  account_id   = "ga-serviceaccount"
+}
+
+# to create a workload
+module "my-app-workload-identity" {
+  source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
+  use_existing_gcp_sa = true
+  name                = google_service_account.ga-serviceaccount.account_id
+  project_id          = var.project_id
+}
+
+# workload creation with creating a new service account
+# module "hack-infinities-workload-identity" {
+#   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
+#   name       = "workload-ServiceAccount"
+#   namespace  = "default"
+#   project_id = "${var.project_id}"
+#   roles      = ["roles/storage.Admin", "roles/compute.Admin"]
+# }
 
 # # Kubernetes provider
 # # The Terraform Kubernetes Provider configuration below is used as a learning reference only. 
