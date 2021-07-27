@@ -6,5 +6,11 @@ terraform {
     }
   }
   required_version = "1.0.2"
+
+  backend "gcs" {
+    bucket = "hack-hsp-infinities-tf"
+    prefix = "terraform/state"
+  }
+
 }
 
