@@ -53,7 +53,7 @@ jobs:
         rm /home/runner/terraform/plans/terraform_plan.out
 
     - name: Terraform Apply
-      continue-on-error: true
+      continue-on-error: false
       if: ${{ env.LIVE_SHASUM == github.event.inputs.checksum }}
       run: |
         echo "Checksums match. Executing terraform apply with checksum [${{ github.event.inputs.Checksum }}]"
