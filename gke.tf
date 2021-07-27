@@ -89,7 +89,7 @@ resource "google_service_account" "ga-serviceaccount" {
 module "my-app-workload-identity" {
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   use_existing_gcp_sa = true
-  name                = google_service_account.GA-ServiceAccount.account_id
+  name                = google_service_account.ga-serviceaccount.account_id
   project_id          = var.project_id
 }
 
