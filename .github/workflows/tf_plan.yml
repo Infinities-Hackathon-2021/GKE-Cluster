@@ -24,7 +24,7 @@ jobs:
       run: gcloud init
     
     - name: authentication
-      run: gcloud auth application-default login
+      run: gcloud auth login
 
     - name: HashiCorp - Setup Terraform
       uses: hashicorp/setup-terraform@v1.2.1
