@@ -24,8 +24,3 @@ resource "google_compute_subnetwork" "subnet" {
   network       = google_compute_network.vpc.name
   ip_cidr_range = "10.10.0.0/24"
 }
-
-#bucket
-resource "google_storage_bucket" "gcs_bucket" {
-  name = "hack-hsp-infinities-tf"
-}
