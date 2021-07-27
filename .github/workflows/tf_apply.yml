@@ -3,7 +3,7 @@ name: Terraform Apply
 on:
   workflow_dispatch:
     inputs:
-      Env:
+      INPUT:
         description: "The terraform apply will run if you say YES"
         required: true
     
@@ -14,6 +14,10 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@master
+
+    - name: Setting the input variables
+      run: |
+        Add-Content -Path $env:GITHUB_ENV -Value "InputValue=${{github.event.inputs.INPUT}}"
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@master
@@ -42,10 +46,6 @@ jobs:
       run: terraform plan
 
     - name: Terraform Apply
-      run: |
-        if('${{ github.event.inputs.Env }}' -eq 'Yes') {
-          echo "Performing terraform apply"
-          terraform plan -auto-approve
-        }else{
-          echo "Terraform apply won't run as the input given is NO"
-        }
+      if: env.InputValue == 'Yes'
+      run:  terraform plan -auto-approve
+        
