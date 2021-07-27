@@ -54,12 +54,13 @@ resource "google_container_node_pool" "primary_nodes" {
   }
 }
 
-resource "google_sql_database_instance" "sql" {
+resource "google_sql_database_instance" "mysql" {
   name                = "${var.project_id}-sql-storage"
   database_version    = "MYSQL_8_0"
   region              = var.region
   deletion_protection = true
   settings {
+    tier = "db-custom-4-15360"
     disk_size       = 200
     disk_autoresize = true
   }
@@ -67,12 +68,12 @@ resource "google_sql_database_instance" "sql" {
 
 resource "google_sql_database" "sql-database" {
   name     = "${var.project_id}-sql-events"
-  instance = google_sql_database_instance.mysql-sql.name
+  instance = google_sql_database_instance.mysql.name
 }
 
 resource "google_sql_user" "sql-user" {
   name     = "${var.project_id}-sql"
-  instance = google_sql_database_instance.mysql-sql.name
+  instance = google_sql_database_instance.mysql.name
   password = var.sql_password
 }
 
