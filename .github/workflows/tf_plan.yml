@@ -36,9 +36,18 @@ jobs:
         terraform_version: 1.0.2 # must be same version as main.tf
         terraform_wrapper: false
     
+    - name: Terraform Formatting
+      id: fmt
+      working-directory: ./
+      continue-on-error: false
+      run: terraform fmt -recursive
+
     - name: Initialize terraform
-      run: terraform init
+      run: terraform init -input=false
 
     - name: Terraform plan
-      run: terraform plan
-    
+      continue-on-error: false
+      run: |
+        mkdir -pv /home/runner/terraform/plans && outfile="${GITHUB_JOB}_${GITHUB_RUN_NUMBER}_`date +%Y_%m_%d_%I_%M_%p`.tf_plan_out"
+        terraform plan -input=false -refresh=true  -out=/home/runner/terraform/plans/terraform_plan.out
+        echo "SHA256 for this modification:" &&  terraform show /home/runner/terraform/plans/terraform_plan.out | sha256sum  | awk '{ print $1 }'

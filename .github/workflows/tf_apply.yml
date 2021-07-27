@@ -3,8 +3,8 @@ name: Terraform Apply
 on:
   workflow_dispatch:
     inputs:
-      INPUT:
-        description: "The terraform apply will run if you say YES"
+      checksum:
+        description: "Change approved shasum to match against the plan"
         required: true
     
 jobs:
@@ -14,10 +14,6 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@master
-
-    - name: Setting the input variables
-      run: |
-        Add-Content -Path $env:GITHUB_ENV -Value "InputValue=${{github.event.inputs.INPUT}}"
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@master
@@ -39,13 +35,27 @@ jobs:
         terraform_version: 1.0.2 # must be same version as main.tf
         terraform_wrapper: false
     
+    - name: Terraform Formatting
+      id: fmt
+      working-directory: ./
+      continue-on-error: false
+      run: terraform fmt -recursive
+
     - name: Initialize Terraform
-      run: terraform init
+      run: terraform init -input=false
 
     - name: Terraform Plan
-      run: terraform plan
+      run: |
+        mkdir -pv /home/runner/terraform/plans && outfile="${GITHUB_JOB}_${GITHUB_RUN_NUMBER}_`date +%Y_%m_%d_%I_%M_%p`.tf_plan_out"
+        terraform plan -input=false -refresh=true  -out=/home/runner/terraform/plans/terraform_plan.out
+        shasum=`terraform show /home/runner/terraform/plans/terraform_plan.out | sha256sum | awk '{ print $1 }'`
+        echo "LIVE_SHASUM=$shasum" >> $GITHUB_ENV
+        rm /home/runner/terraform/plans/terraform_plan.out
 
     - name: Terraform Apply
-      if: env.InputValue == 'Yes'
-      run:  terraform plan -auto-approve
+      continue-on-error: true
+      if: ${{ env.LIVE_SHASUM == github.event.inputs.checksum }}
+      run: |
+        echo "Checksums match. Executing terraform apply with checksum [${{ github.event.inputs.Checksum }}]"
+        terraform apply -input=false -refresh=true -auto-approve
         
