@@ -43,9 +43,9 @@ jobs:
 
     - name: Terraform Apply
       run: |
-      if('${{ github.event.inputs.Env }}' -eq 'Yes') {
-        echo "Performing terraform apply"
-        terraform plan -auto-approve
-      }else{
-        echo "Terraform apply won't run as the input given is NO"
-      }
+        if('${{ github.event.inputs.Env }}' -eq 'Yes') {
+          echo "Performing terraform apply"
+          terraform plan -auto-approve
+        }else{
+          echo "Terraform apply won't run as the input given is NO"
+        }
