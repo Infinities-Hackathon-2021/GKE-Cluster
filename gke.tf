@@ -81,8 +81,8 @@ resource "google_sql_user" "sql-user" {
 }
 
 # using the preexisting service account
-resource "google_service_account" "GA-ServiceAccount" {
-  account_id   = "ga-ServiceAccount"
+resource "google_service_account" "ga-serviceaccount" {
+  account_id   = "ga-serviceaccount"
 }
 
 # to create a workload
