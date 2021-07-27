@@ -1,0 +1,40 @@
+name: Terraform Plan
+
+on:
+  pull_request:
+    branches:
+      - master
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@master
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Use gcloud CLI to initialize
+      run: gcloud init
+    
+    - name: authentication
+      run: gcloud auth application-default login
+
+    - name: HashiCorp - Setup Terraform
+      uses: hashicorp/setup-terraform@v1.2.1
+      with:
+        terraform_version: 1.0.2 # must be same version as main.tf
+        terraform_wrapper: false
+    
+    - name: Initialize terraform
+      run: terraform init
+
+    - name: Terraform plan
+      run: terraform plan
+    
