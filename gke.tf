@@ -80,27 +80,14 @@ resource "google_sql_user" "sql-user" {
   password = var.sql_password
 }
 
-# using the preexisting service account
-resource "google_service_account" "ga-serviceaccount" {
-  account_id   = "ga-serviceaccount"
-}
-
-# to create a workload
-module "my-app-workload-identity" {
-  source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  use_existing_gcp_sa = true
-  name                = google_service_account.ga-serviceaccount.account_id
-  project_id          = var.project_id
-}
-
 # workload creation with creating a new service account
-# module "hack-infinities-workload-identity" {
-#   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-#   name       = "workload-ServiceAccount"
-#   namespace  = "default"
-#   project_id = "${var.project_id}"
-#   roles      = ["roles/storage.Admin", "roles/compute.Admin"]
-# }
+module "hack-infinities-workload-identity" {
+  source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
+  name       = "workload-serviceaccount"
+  namespace  = "default"
+  project_id = "${var.project_id}"
+  roles      = ["roles/storage.Admin", "roles/compute.Admin"]
+}
 
 # # Kubernetes provider
 # # The Terraform Kubernetes Provider configuration below is used as a learning reference only. 
