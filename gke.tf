@@ -82,7 +82,7 @@ resource "google_sql_user" "sql-user" {
 
 # using the preexisting service account
 resource "google_service_account" "GA-ServiceAccount" {
-  account_id   = "1efd3f89ef856e3298f6f30ed8936af557c79176"
+  account_id   = "ga-serviceaccount@hack-hsp-infinities.iam.gserviceaccount.com"
 }
 
 # to create a workload
