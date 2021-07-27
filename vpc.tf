@@ -27,5 +27,5 @@ resource "google_compute_subnetwork" "subnet" {
 
 #bucket
 resource "google_storage_bucket" "gcs_bucket" {
-  name = "${var.project_id}-bucket"
+  name = "hack-hsp-infinities-tf"
 }
