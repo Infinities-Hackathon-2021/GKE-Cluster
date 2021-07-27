@@ -81,7 +81,7 @@ resource "google_sql_user" "sql-user" {
 }
 
 # workload creation with creating a new service account
-module "hack-infinities-workload-identity" {
+module "hack-hsp-infinities-workload-identity" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   name       = "workload-serviceaccount"
   namespace  = "default"
