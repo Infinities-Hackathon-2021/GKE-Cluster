@@ -54,6 +54,27 @@ resource "google_container_node_pool" "primary_nodes" {
   }
 }
 
+resource "google_sql_database_instance" "sql" {
+  name                = "${var.project_id}-sql-storage"
+  database_version    = "MYSQL_8_0"
+  region              = var.region
+  deletion_protection = true
+  settings {
+    disk_size       = 200
+    disk_autoresize = true
+  }
+}
+
+resource "google_sql_database" "sql-database" {
+  name     = "${var.project_id}-sql-events"
+  instance = google_sql_database_instance.mysql-sql.name
+}
+
+resource "google_sql_user" "sql-user" {
+  name     = "${var.project_id}-sql"
+  instance = google_sql_database_instance.mysql-sql.name
+  password = var.sql_password
+}
 
 # # Kubernetes provider
 # # The Terraform Kubernetes Provider configuration below is used as a learning reference only. 

@@ -6,6 +6,11 @@ variable "region" {
   description = "region"
 }
 
+variable "sql_password" {
+  type    = string
+  default = "CHaNGE1@!"
+}
+
 provider "google" {
   project = var.project_id
   region  = var.region
