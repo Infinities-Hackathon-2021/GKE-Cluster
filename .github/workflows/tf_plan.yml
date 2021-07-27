@@ -24,7 +24,8 @@ jobs:
       run: gcloud init
     
     - name: authentication
-      run: gcloud auth application-default login
+      run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+        # gcloud auth login --console-only
 
     - name: HashiCorp - Setup Terraform
       uses: hashicorp/setup-terraform@v1.2.1

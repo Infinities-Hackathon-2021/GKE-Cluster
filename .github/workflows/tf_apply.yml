@@ -1,0 +1,51 @@
+name: Terraform Plan
+
+on:
+  workflow_dispatch:
+    inputs:
+      Env:
+        description: "The terraform apply will run if you say YES"
+        required: true
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@master
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Use gcloud CLI to initialize
+      run: gcloud init
+    
+    - name: authentication
+      run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+        # gcloud auth login --console-only
+
+    - name: HashiCorp - Setup Terraform
+      uses: hashicorp/setup-terraform@v1.2.1
+      with:
+        terraform_version: 1.0.2 # must be same version as main.tf
+        terraform_wrapper: false
+    
+    - name: Initialize Terraform
+      run: terraform init
+
+    - name: Terraform Plan
+      run: terraform plan
+
+    - name: Terraform Apply
+      run: |
+      if('${{ github.event.inputs.Env }}' -eq 'Yes') {
+        echo "Performing terraform apply"
+        terraform plan -auto-approve
+      }else{
+        echo "Terraform apply won't run as the input given is NO"
+      }
