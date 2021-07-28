@@ -17,8 +17,3 @@ output "kubernetes_cluster_host" {
   value       = google_container_cluster.primary.endpoint
   description = "GKE Cluster Host"
 }
-
-output "workload_identity" {
-  value = hack-hsp-infinities-workload-identity.name
-  description = "GKE Workload Identity"
-}

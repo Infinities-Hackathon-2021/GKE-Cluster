@@ -4,6 +4,9 @@ terraform {
       source  = "hashicorp/google"
       version = "3.52.0"
     }
+    kubernetes = {
+      load_config_file = false
+    }
   }
   required_version = "1.0.2"
 
