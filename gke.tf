@@ -91,11 +91,11 @@ module "hack-hsp-infinities-workload-identity" {
 
 data "google_container_cluster" "default" {
   name       = "${var.project_id}-gke"
-  depends_on = google_container_cluster.primary
+  depends_on = [google_container_cluster.primary]
 }
 
 data "google_client_config" "default" {
-  depends_on = google_container_cluster.primary
+  depends_on = [google_container_cluster.primary]
 }
 
 provider "kubernetes" {
