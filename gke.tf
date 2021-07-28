@@ -108,20 +108,21 @@ resource "google_sql_user" "mysql-user" {
   # roles      = ["roles/storage.admin", "roles/compute.admin"]
 # }
 
-data "google_container_cluster" "default" {
-  name       = "${var.project_id}-gke"
-  location   = var.region
-  depends_on = [google_container_cluster.primary]
-}
+# data "google_container_cluster" "default" {
+  # name       = "${var.project_id}-gke"
+  # location   = var.region
+  # depends_on = [google_container_cluster.primary]
+# }
+# 
+# data "google_client_config" "default" {
+  # depends_on = [google_container_cluster.primary]
+# }
 
-data "google_client_config" "default" {
-  depends_on = [google_container_cluster.primary]
-}
-
-provider "kubernetes" {
-  host  = "https://${data.google_container_cluster.default.endpoint}"
-  token = data.google_client_config.default.access_token
-  cluster_ca_certificate = base64decode(
-    data.google_container_cluster.default.master_auth[0].cluster_ca_certificate,
-  )
-}
+# provider "kubernetes" {
+  # host  = "https://${data.google_container_cluster.default.endpoint}"
+  # token = data.google_client_config.default.access_token
+  # cluster_ca_certificate = base64decode(
+    # data.google_container_cluster.default.master_auth[0].cluster_ca_certificate,
+  # )
+# }
+# 
