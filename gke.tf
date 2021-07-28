@@ -80,6 +80,7 @@ resource "google_sql_user" "sql-user" {
   password = var.sql_password
 }
 
+# creating workload identity
 resource "google_iam_workload_identity_pool" "workload_identity" {
   provider                  = google-beta
   workload_identity_pool_id = "${var.project_id}"
@@ -93,10 +94,6 @@ module "hack-hsp-infinities-workload-identity" {
   project_id = var.project_id
   roles      = ["roles/storage.admin", "roles/compute.admin"]
 }
-
-# workload_identity_config {
-#   identity_namespace = "${module.hack-hsp-infinities-workload-identity.name}.svc.id.goog"
-# }
 
 data "google_container_cluster" "default" {
   name       = "${var.project_id}-gke"
