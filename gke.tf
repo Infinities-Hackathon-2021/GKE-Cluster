@@ -17,7 +17,7 @@ variable "gke_num_nodes" {
 resource "google_container_cluster" "primary" {
   name     = "${var.project_id}-gke"
   location = var.region
-  
+
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
@@ -61,7 +61,7 @@ resource "google_sql_database_instance" "mysql" {
   region              = var.region
   deletion_protection = true
   settings {
-    tier = "db-custom-4-15360"
+    tier            = "db-custom-4-15360"
     disk_size       = 200
     disk_autoresize = true
   }
@@ -80,17 +80,31 @@ resource "google_sql_user" "sql-user" {
   password = var.sql_password
 }
 
-provider "kubernetes" {
-  config_path = "~/.kube/config"
-}
-
 # workload creation with creating a new service account
 module "hack-hsp-infinities-workload-identity" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   name       = "workload-serviceaccount"
   namespace  = "default"
-  project_id = "${var.project_id}"
-  roles      = ["roles/storage.Admin", "roles/compute.Admin"]
+  project_id = var.project_id
+  roles      = ["roles/storage.admin", "roles/compute.admin"]
+}
+
+data "google_container_cluster" "default" {
+  name       = "${var.project_id}-gke"
+  location   = var.region
+  depends_on = [google_container_cluster.primary]
+}
+
+data "google_client_config" "default" {
+  depends_on = [google_container_cluster.primary]
+}
+
+provider "kubernetes" {
+  host  = "https://${data.google_container_cluster.default.endpoint}"
+  token = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(
+    data.google_container_cluster.default.master_auth[0].cluster_ca_certificate,
+  )
 }
 
 # # Kubernetes provider
