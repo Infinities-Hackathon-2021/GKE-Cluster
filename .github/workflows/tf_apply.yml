@@ -6,15 +6,14 @@ on:
       checksum:
         description: "Change approved shasum to match against the plan"
         required: true
-      Operation: 
-          description: "create or delete"
-          default: 'create'
-          required: true
-
+      operation:
+        description: "create or delete"
+        required: true
+    
 jobs:
-  build:
+  Create:
     runs-on: ubuntu-latest
-
+    if: ${{ github.event.inputs.operation == 'create' }}
     steps:
     - name: Checkout Code
       uses: actions/checkout@master
@@ -49,7 +48,6 @@ jobs:
       run: terraform init -input=false
 
     - name: Terraform Plan
-      if: ${{github.event.inputs.operation != 'delete' }}
       run: |
         mkdir -pv /home/runner/terraform/plans && outfile="${GITHUB_JOB}_${GITHUB_RUN_NUMBER}_`date +%Y_%m_%d_%I_%M_%p`.tf_plan_out"
         terraform plan -input=false -refresh=true  -out=/home/runner/terraform/plans/terraform_plan.out
@@ -59,12 +57,47 @@ jobs:
 
     - name: Terraform Apply
       continue-on-error: false
-      if: ${{ env.LIVE_SHASUM == github.event.inputs.checksum }} && ${{github.event.inputs.operation != 'delete' }}
+      if: ${{ env.LIVE_SHASUM == github.event.inputs.checksum }}
       run: |
         echo "Checksums match. Executing terraform apply with checksum [${{ github.event.inputs.Checksum }}]"
-        terraform apply -input=false -refresh=true -auto-approve        
+        terraform apply -input=false -refresh=true -auto-approve
+        
+  Destroy:
+    name: Destroy Cluster
+    if: ${{ github.event.inputs.Operation == 'delete' }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@master 
+    
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true 
+    
+    - name: Use gcloud CLI to initialize
+      run: gcloud init
+
+    - name: authentication
+      run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+    
+    - name: HashiCorp - Setup Terraform
+      uses: hashicorp/setup-terraform@v1.2.1
+      with:
+        terraform_version: 1.0.2 # must be same version as main.tf
+        terraform_wrapper: false
+
+    - name: Terraform Formatting
+      id: fmt
+      working-directory: ./
+      continue-on-error: false
+      run: terraform fmt -recursive 
+    - name: Initialize Terraform
+      run: terraform init -input=false
+
     - name: Terraform destroy 
       id: destroy
-      if: ${{github.event.inputs.operation == 'delete' }}
       run: |
         terraform destroy -input=false -auto-approve
