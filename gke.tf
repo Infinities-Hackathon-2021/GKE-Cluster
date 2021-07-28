@@ -94,7 +94,7 @@ module "my-app-workload-identity" {
   project_id          = var.project_id
 }
 
-workload_identity_config {
+dynamic "workload_identity_config" {
     identity_namespace = "${var.project}-workload.svc.id.goog"
   }
 
