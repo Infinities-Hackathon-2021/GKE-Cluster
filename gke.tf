@@ -82,7 +82,7 @@ resource "google_sql_user" "sql-user" {
 
 resource "google_iam_workload_identity_pool" "workload_identity" {
   provider                  = google-beta
-  workload_identity_pool_id = "${var.project_id}-workload-identity"
+  workload_identity_pool_id = module.hack-hsp-infinities-workload-identity.name
 }
 
 # workload creation with creating a new service account
