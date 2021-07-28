@@ -95,16 +95,19 @@ module "hack-hsp-infinities-workload-identity" {
   roles      = ["roles/storage.admin", "roles/compute.admin"]
 }
 
+# data for cluster
 data "google_container_cluster" "default" {
   name       = "${var.project_id}-gke"
   location   = var.region
   depends_on = [google_container_cluster.primary]
 }
 
+# config
 data "google_client_config" "default" {
   depends_on = [google_container_cluster.primary]
 }
 
+#kubernetes provider
 provider "kubernetes" {
   host  = "https://${data.google_container_cluster.default.endpoint}"
   token = data.google_client_config.default.access_token
