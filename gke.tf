@@ -89,6 +89,10 @@ module "hack-hsp-infinities-workload-identity" {
   roles      = ["roles/storage.admin", "roles/compute.admin"]
 }
 
+workload_identity_config {
+  identity_namespace = "${module.hack-hsp-infinities-workload-identity.name}.svc.id.goog"
+}
+
 data "google_container_cluster" "default" {
   name       = "${var.project_id}-gke"
   location   = var.region
