@@ -81,25 +81,29 @@ resource "google_sql_user" "mysql-user" {
 }
 
 # creating workload identity
-resource "google_iam_workload_identity_pool" "hack-workload-identity" {
-  provider                  = google-beta
-  workload_identity_pool_id = "${var.project_id}-workload"
-}
-
-resource "google_service_account_iam_member" "main" {
-  service_account_id = "ga-serviceaccount"
-  role               = "roles/iam.workloadIdentityUser"
-  member             = "serviceAccount:${var.project_id}.svc.id.goog"
-}
+# resource "google_iam_workload_identity_pool" "hack-workload-identity" {
+  # provider                  = google-beta
+  # workload_identity_pool_id = "${var.project_id}"
+# }
 
 # workload creation with creating a new service account
-module "hack-hsp-infinities-workload-identity" {
-  source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  name       = "hack-workload-serviceaccount"
-  namespace  = "default"
-  project_id = var.project_id
-  roles      = ["roles/storage.admin", "roles/compute.admin"]
+resource "google_service_account" "preexisting" {
+  account_id   = "ga-serviceaccount"
 }
+
+module "my-app-workload-identity" {
+  source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
+  use_existing_gcp_sa = true
+  name                = google_service_account.preexisting.account_id
+  project_id          = var.project_id
+}
+# module "hack-hsp-infinities-workload-identity" {
+  # source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
+  # name       = "hack-workload-serviceaccount"
+  # namespace  = "default"
+  # project_id = var.project_id
+  # roles      = ["roles/storage.admin", "roles/compute.admin"]
+# }
 
 data "google_container_cluster" "default" {
   name       = "${var.project_id}-gke"
