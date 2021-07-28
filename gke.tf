@@ -24,8 +24,8 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  # network    = google_compute_network.vpc.name
-  # subnetwork = google_compute_subnetwork.subnet.name
+  network    = google_compute_network.vpc.name
+  subnetwork = google_compute_subnetwork.subnet.name
 }
 
 # Separately Managed Node Pool
@@ -86,7 +86,7 @@ module "hack-hsp-infinities-workload-identity" {
   name       = "workload-serviceaccount"
   namespace  = "default"
   project_id = var.project_id
-  roles      = ["roles/storage.Admin", "roles/compute.Admin"]
+  roles      = ["roles/storage.admin", "roles/compute.admin"]
 }
 
 data "google_container_cluster" "default" {
