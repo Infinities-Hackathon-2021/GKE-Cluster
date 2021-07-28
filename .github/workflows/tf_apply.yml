@@ -49,6 +49,7 @@ jobs:
       run: terraform init -input=false
 
     - name: Terraform Plan
+      if: ${{github.event.inputs.operation != 'delete' }}
       run: |
         mkdir -pv /home/runner/terraform/plans && outfile="${GITHUB_JOB}_${GITHUB_RUN_NUMBER}_`date +%Y_%m_%d_%I_%M_%p`.tf_plan_out"
         terraform plan -input=false -refresh=true  -out=/home/runner/terraform/plans/terraform_plan.out
@@ -58,12 +59,12 @@ jobs:
 
     - name: Terraform Apply
       continue-on-error: false
-      if: ${{ env.LIVE_SHASUM == github.event.inputs.checksum }}
+      if: ${{ env.LIVE_SHASUM == github.event.inputs.checksum }} && ${{github.event.inputs.operation != 'delete' }}
       run: |
         echo "Checksums match. Executing terraform apply with checksum [${{ github.event.inputs.Checksum }}]"
         terraform apply -input=false -refresh=true -auto-approve        
     - name: Terraform destroy 
       id: destroy
-      if: ${{ github.event.inputs.operation == 'delete' }}
+      if: ${{github.event.inputs.operation == 'delete' }}
       run: |
         terraform destroy -input=false -auto-approve
