@@ -87,17 +87,18 @@ resource "google_sql_user" "mysql-user" {
 # }
 
 # utilizing the existing service account
-resource "google_service_account" "preexisting" {
-  account_id   = "ga-serviceaccount"
-}
+# resource "google_service_account" "preexisting" {
+#   account_id   = "ga-serviceaccount"
+# }
 
 # creating workload identity with the above existing service account
 module "my-app-workload-identity" {
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   use_existing_gcp_sa = true
-  name                = google_service_account.preexisting.account_id
+  name                = "ga-serviceaccount"
   project_id          = var.project_id
 }
+
 # module "hack-hsp-infinities-workload-identity" {
   # source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   # name       = "hack-workload-serviceaccount"
