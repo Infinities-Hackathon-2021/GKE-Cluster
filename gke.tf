@@ -59,7 +59,7 @@ resource "google_sql_database_instance" "mysql" {
   name                = "${var.project_id}-sql-storage"
   database_version    = "MYSQL_8_0"
   region              = var.region
-  deletion_protection = true
+  deletion_protection = false
   settings {
     tier            = "db-custom-4-15360"
     disk_size       = 200
