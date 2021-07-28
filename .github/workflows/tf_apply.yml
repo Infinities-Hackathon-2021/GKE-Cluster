@@ -3,9 +3,6 @@ name: Terraform Apply
 on:
   workflow_dispatch:
     inputs:
-      checksum:
-        description: "Change approved shasum to match against the plan"
-        required: true
       operation:
         description: "create or delete"
         required: true
