@@ -80,6 +80,11 @@ resource "google_sql_user" "sql-user" {
   password = var.sql_password
 }
 
+resource "google_iam_workload_identity_pool" "workload_identity" {
+  provider                  = google-beta
+  workload_identity_pool_id = "${var.project_id}"
+}
+
 # workload creation with creating a new service account
 module "hack-hsp-infinities-workload-identity" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
@@ -89,9 +94,9 @@ module "hack-hsp-infinities-workload-identity" {
   roles      = ["roles/storage.admin", "roles/compute.admin"]
 }
 
-workload_identity_config {
-  identity_namespace = "${module.hack-hsp-infinities-workload-identity.name}.svc.id.goog"
-}
+# workload_identity_config {
+#   identity_namespace = "${module.hack-hsp-infinities-workload-identity.name}.svc.id.goog"
+# }
 
 data "google_container_cluster" "default" {
   name       = "${var.project_id}-gke"
