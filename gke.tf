@@ -80,10 +80,6 @@ resource "google_sql_user" "sql-user" {
   password = var.sql_password
 }
 
-provider "kubernetes" {
-  config_path = "~/.kube/config"
-}
-
 # workload creation with creating a new service account
 module "hack-hsp-infinities-workload-identity" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
@@ -91,6 +87,28 @@ module "hack-hsp-infinities-workload-identity" {
   namespace  = "default"
   project_id = "${var.project_id}"
   roles      = ["roles/storage.Admin", "roles/compute.Admin"]
+}
+
+module "gke-cluster" {
+  source       = "./"
+  cluster_name = "${var.project_id}-gke"
+}
+
+data "google_container_cluster" "default" {
+  name = "${var.project_id}-gke"
+  depends_on = [module.gke-cluster]
+}
+
+data "google_client_config" "default" {  
+  depends_on = [module.gke-cluster]
+}
+
+provider "kubernetes" {
+  host  = "https://${data.google_container_cluster.default.endpoint}"
+  token = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(
+    data.google_container_cluster.default.master_auth[0].cluster_ca_certificate,
+  )
 }
 
 # # Kubernetes provider
