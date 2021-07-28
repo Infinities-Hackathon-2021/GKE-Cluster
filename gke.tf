@@ -94,11 +94,15 @@ module "my-app-workload-identity" {
   project_id          = var.project_id
 }
 
-resource "google_service_account_iam_member" "main" {
-  service_account_id = "projects/hack-hsp-infinities/serviceAccounts/ga-serviceaccount@hack-hsp-infinities.iam.gserviceaccount.com"
-  role               = "roles/iam.workloadIdentityUser"
-  member             = "serviceAccount:hack-hsp-infinities-workload.svc.id.goog[default/ga-serviceaccount]"
-}
+workload_identity_config {
+    identity_namespace = "${var.project}-workload.svc.id.goog"
+  }
+
+# resource "google_service_account_iam_member" "main" {
+#   service_account_id = "projects/hack-hsp-infinities/serviceAccounts/ga-serviceaccount@hack-hsp-infinities.iam.gserviceaccount.com"
+#   role               = "roles/iam.workloadIdentityUser"
+#   member             = "serviceAccount:hack-hsp-infinities-workload.svc.id.goog[default/ga-serviceaccount]"
+# }
 
 # module "hack-hsp-infinities-workload-identity" {
   # source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
