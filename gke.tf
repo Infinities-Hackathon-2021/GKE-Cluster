@@ -86,11 +86,6 @@ resource "google_iam_workload_identity_pool" "hack-hsp-infinities-identity" {
   workload_identity_pool_id = "${var.project_id}-workload"
 }
 
-# utilizing the existing service account
-# resource "google_service_account" "preexisting" {
-#   account_id   = "ga-serviceaccount"
-# }
-
 # creating workload identity with the above existing service account
 module "my-app-workload-identity" {
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
@@ -99,11 +94,11 @@ module "my-app-workload-identity" {
   project_id          = var.project_id
 }
 
-# resource "google_service_account_iam_member" "main" {
-#   service_account_id = "projects/hack-hsp-infinities/serviceAccounts/ga-serviceaccount@hack-hsp-infinities.iam.gserviceaccount.com"
-#   role               = "roles/iam.workloadIdentityUser"
-#   member             = "serviceAccount:hack-hsp-infinities.svc.id.goog[default/ga-serviceaccount]"
-# }
+resource "google_service_account_iam_member" "main" {
+  service_account_id = "projects/hack-hsp-infinities/serviceAccounts/ga-serviceaccount@hack-hsp-infinities.iam.gserviceaccount.com"
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "serviceAccount:hack-hsp-infinities-workload.svc.id.goog[default/ga-serviceaccount]"
+}
 
 # module "hack-hsp-infinities-workload-identity" {
   # source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
