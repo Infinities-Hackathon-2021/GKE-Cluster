@@ -65,6 +65,5 @@ jobs:
     - name: Terraform destroy 
       id: destroy
       if: ${{github.event.inputs.operation == delete }}
-      working-directory: ./${{ steps.wd.outputs.directory }} 
       run: |
         terraform destroy -input=false -auto-approve
