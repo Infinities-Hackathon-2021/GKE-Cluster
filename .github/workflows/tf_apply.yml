@@ -61,34 +61,10 @@ jobs:
       if: ${{ env.LIVE_SHASUM == github.event.inputs.checksum }}
       run: |
         echo "Checksums match. Executing terraform apply with checksum [${{ github.event.inputs.Checksum }}]"
-        terraform apply -input=false -refresh=true -auto-approve
-        
-Destroy:
-   name: Destroy Cluster
-   if: ${{ github.event.inputs.Operation == 'delete' }}
-   runs-on: ubuntu-latest
-   steps:
-     - name: Checkout
-       uses: actions/checkout@v2
-     
-     - uses: hashicorp/setup-terraform@v1
-       with:
-         terraform-version: 0.14.2
-     
-     - uses: azure/login@v1
-       with: 
-         creds: ${{ secrets.AZURE_CREDENTIALS }}
-     - name: Configure working directory
-       id: wd
-       run: |
-        echo "::set-output name=directory::./$WORKSPACE/cluster"
-     - name: Terraform init
-       id: init
-       working-directory: ./${{ steps.wd.outputs.directory }}
-       run: |
-         terraform init -input=false
-     - name: Terraform destroy 
-       id: destroy
-       working-directory: ./${{ steps.wd.outputs.directory }} 
-       run: |
-         terraform destroy -input=false -auto-approve
+        terraform apply -input=false -refresh=true -auto-approve        
+    - name: Terraform destroy 
+      id: destroy
+      if: ${{github.event.inputs.operation == delete }}
+      working-directory: ./${{ steps.wd.outputs.directory }} 
+      run: |
+        terraform destroy -input=false -auto-approve
