@@ -91,6 +91,7 @@ module "hack-hsp-infinities-workload-identity" {
 
 data "google_container_cluster" "default" {
   name       = "${var.project_id}-gke"
+  location   = var.region
   depends_on = [google_container_cluster.primary]
 }
 
