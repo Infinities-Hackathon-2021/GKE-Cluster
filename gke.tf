@@ -81,7 +81,7 @@ resource "google_sql_user" "sql-user" {
 }
 
 # creating a workload identity pool
-resource "google_iam_workload_identity_pool" "workload_identity" {
+resource "google_iam_workload_identity_pool" "workload-identity" {
   provider                  = google-beta
   workload_identity_pool_id = module.hack-hsp-infinities-workload-identity.name
 }
@@ -95,7 +95,6 @@ module "hack-hsp-infinities-workload-identity" {
   roles      = ["roles/storage.admin", "roles/compute.admin"]
 }
 
-# data for cluster
 data "google_container_cluster" "default" {
   name       = "${var.project_id}-gke"
   location   = var.region
