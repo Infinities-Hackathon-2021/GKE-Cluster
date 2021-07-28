@@ -16,10 +16,6 @@ provider "google" {
   region  = var.region
 }
 
-provider "kubernetes" {
-  load_config_file = false
-}
-
 # VPC
 resource "google_compute_network" "vpc" {
   name                    = "${var.project_id}-vpc"
