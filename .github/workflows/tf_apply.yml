@@ -6,10 +6,10 @@ on:
       checksum:
         description: "Change approved shasum to match against the plan"
         required: true
-    Operation: 
-        description: "create or delete"
-        default: 'create'
-        required: true
+      Operation: 
+          description: "create or delete"
+          default: 'create'
+          required: true
 
 jobs:
   build:
