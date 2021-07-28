@@ -86,11 +86,12 @@ resource "google_sql_user" "mysql-user" {
   # workload_identity_pool_id = "${var.project_id}"
 # }
 
-# workload creation with creating a new service account
+# utilizing the existing service account
 resource "google_service_account" "preexisting" {
   account_id   = "ga-serviceaccount"
 }
 
+# creating workload identity with the above existing service account
 module "my-app-workload-identity" {
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   use_existing_gcp_sa = true
