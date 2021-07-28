@@ -87,7 +87,7 @@ resource "google_iam_workload_identity_pool" "hack-workload-identity" {
 }
 
 resource "google_service_account_iam_member" "main" {
-  service_account_id = module.hack-hsp-infinities-workload-identity.name
+  service_account_id = "hack-workload-serviceaccount"
   role               = "roles/iam.workloadIdentityUser"
   member             = "serviceAccount:${var.project_id}.svc.id.goog"
 }
