@@ -6,7 +6,11 @@ on:
       checksum:
         description: "Change approved shasum to match against the plan"
         required: true
-    
+      Operation: 
+          description: "create or delete"
+          default: 'create'
+          required: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -57,5 +61,9 @@ jobs:
       if: ${{ env.LIVE_SHASUM == github.event.inputs.checksum }}
       run: |
         echo "Checksums match. Executing terraform apply with checksum [${{ github.event.inputs.Checksum }}]"
-        terraform apply -input=false -refresh=true -auto-approve
-        
+        terraform apply -input=false -refresh=true -auto-approve        
+    - name: Terraform destroy 
+      id: destroy
+      if: ${{github.event.inputs.operation == 'delete' }}
+      run: |
+        terraform destroy -input=false -auto-approve
