@@ -81,7 +81,7 @@ resource "google_sql_user" "sql-user" {
 }
 
 provider "kubernetes" {
-  load_config_file = false
+  config_path = "~/.kube/config"
 }
 
 # workload creation with creating a new service account
