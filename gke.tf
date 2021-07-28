@@ -56,7 +56,7 @@ resource "google_container_cluster" "primary" {
 
 # creating sql instance
 resource "google_sql_database_instance" "mysql" {
-  name                = "${var.project_id}-mysql-storage"
+  name                = "${var.project_id}-mysql8-storage"
   database_version    = "MYSQL_8_0"
   region              = var.region
   deletion_protection = false
