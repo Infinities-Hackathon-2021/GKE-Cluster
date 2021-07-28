@@ -64,6 +64,6 @@ jobs:
         terraform apply -input=false -refresh=true -auto-approve        
     - name: Terraform destroy 
       id: destroy
-      if: ${{github.event.inputs.operation == delete }}
+      if: ${{github.event.inputs.operation == 'delete' }}
       run: |
         terraform destroy -input=false -auto-approve
