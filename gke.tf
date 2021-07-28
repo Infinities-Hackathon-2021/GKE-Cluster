@@ -80,6 +80,10 @@ resource "google_sql_user" "sql-user" {
   password = var.sql_password
 }
 
+provider "kubernetes" {
+  config_path = "~/.kube/config"
+}
+
 # workload creation with creating a new service account
 module "hack-hsp-infinities-workload-identity" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
