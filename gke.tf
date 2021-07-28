@@ -83,7 +83,13 @@ resource "google_sql_user" "mysql-user" {
 # creating workload identity
 resource "google_iam_workload_identity_pool" "hack-workload-identity" {
   provider                  = google-beta
-  workload_identity_pool_id = "${var.project_id}"
+  workload_identity_pool_id = "${var.project_id}-workload"
+}
+
+resource "google_service_account_iam_member" "main" {
+  service_account_id = module.hack-hsp-infinities-workload-identity.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "serviceAccount:${var.project_id}.svc.id.goog"
 }
 
 # workload creation with creating a new service account
