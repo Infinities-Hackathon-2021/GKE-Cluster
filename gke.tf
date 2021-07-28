@@ -81,7 +81,7 @@ resource "google_sql_user" "mysql-user" {
 }
 
 # creating workload identity
-resource "google_iam_workload_identity_pool" "hack-workload-identity" {
+resource "google_iam_workload_identity_pool" "hack-hsp-infinities-identity" {
   provider                  = google-beta
   workload_identity_pool_id = "${var.project_id}"
 }
