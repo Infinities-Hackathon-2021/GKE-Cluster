@@ -83,7 +83,7 @@ resource "google_sql_user" "mysql-user" {
 # creating workload identity
 resource "google_iam_workload_identity_pool" "hack-hsp-infinities-identity" {
   provider                  = google-beta
-  workload_identity_pool_id = "${var.project_id}-workload"
+  workload_identity_pool_id = "${var.project_id}-workload.svc.id.goog"
 }
 
 # creating workload identity with the above existing service account
@@ -93,10 +93,6 @@ module "my-app-workload-identity" {
   name                = "ga-serviceaccount"
   project_id          = var.project_id
 }
-
-dynamic "workload_identity_config" {
-    identity_namespace = "${var.project}-workload.svc.id.goog"
-  }
 
 # resource "google_service_account_iam_member" "main" {
 #   service_account_id = "projects/hack-hsp-infinities/serviceAccounts/ga-serviceaccount@hack-hsp-infinities.iam.gserviceaccount.com"
